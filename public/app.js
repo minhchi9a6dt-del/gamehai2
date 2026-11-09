@@ -32,7 +32,15 @@ function renderTeacher(r){$('teacher-code').textContent=r.code;qr();$('teacher-s
  updateClock();}
 function renderStudent(r,oldRound){$('student-code').textContent=r.code;$('my-team').textContent=team?'Nhóm '+team:'Chưa chọn nhóm';$('student-state').textContent=({waiting:'Đang chờ',playing:'Đang thi',finished:'Kết thúc'})[r.status];
  if(team && oldRound && oldRound!==r.round){selected=[null,null,null];activeBlank=0}
- if(!team){show('team-picker');show('waiting',false);show('playing',false);show('submitted',false);show('student-finished',false);renderTeamPicker(r);return}
+if (!r.joinedTeams.includes(team)) {
+  show('team-picker', false);
+  show('waiting', true);
+  show('playing', false);
+  show('submitted', false);
+  show('student-finished', false);
+  notice('Đang đồng bộ lại nhóm với giáo viên...');
+  return;
+}
  if(!r.joinedTeams.includes(team)){team=0;studentToken='';localStorage.removeItem('fish_student_'+code);notice('Giáo viên đã đặt lại nhóm. Hãy chọn nhóm để tham gia.');renderStudent(r,oldRound);return}
  show('team-picker',false);const submitted=r.submittedTeams.includes(team);
  show('waiting',r.status==='waiting');show('playing',r.status==='playing'&&!submitted);show('submitted',r.status==='playing'&&submitted);show('student-finished',r.status==='finished');
@@ -50,5 +58,5 @@ function updateClock(){if(!room)return;const elapsed=room.startedAt?(room.endedA
 async function refresh(){if(!role||!code||pollBusy)return;pollBusy=true;try{const data=await api('state',{},'GET');render(data.room);if($('notice').textContent.startsWith('Mất kết nối'))notice('')}catch(e){notice('Mất kết nối tạm thời: '+e.message)}finally{pollBusy=false}}
 function init(){const p=new URLSearchParams(location.search),r=p.get('role'),c=p.get('room');if((r==='teacher'||r==='student')&&/^\d{6}$/.test(c||'')){setRoute(r,c);if(r==='teacher'){teacherToken=localStorage.getItem('fish_teacher_'+c)||'';if(!teacherToken){show('teacher',false);show('home');notice('Không có quyền giáo viên trên thiết bị này. Hãy tạo phòng mới từ màn hình chính.');role='';return}}
  if(r==='student'){try{const saved=JSON.parse(localStorage.getItem('fish_student_'+c)||'null');if(saved){team=saved.team;studentToken=saved.studentToken}}catch{}}refresh()}
-setInterval(refresh,1500);setInterval(updateClock,250);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});}
+setInterval(refresh,1000);setInterval(updateClock,250);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});}
 init();
