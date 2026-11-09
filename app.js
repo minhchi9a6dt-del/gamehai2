@@ -281,13 +281,31 @@ function renderTeacher() {
         b.score - a.score || a.elapsedMs - b.elapsedMs
       );
 
-    $("ranking").innerHTML = ranking.map((r, i) => `
-      <div class="rank">
-        <strong>${["🥇","🥈","🥉","⭐","⭐"][i]}
-          Nhóm ${r.team}</strong>
-        <span>${r.score}/3 câu · ${fmt(r.elapsedMs)}</span>
-      </div>
-    `).join("") || "Chưa có nhóm nộp bài.";
+    const rankByTeam = new Map(ranking.map((r, i) => [r.team, i + 1]));
+    const questionNames = ["Câu 1", "Câu 2", "Câu 3"];
+    const answerCell = (n, index) => {
+      const r = results[n];
+      if (!r) return `<span class="no-answer">Chưa nộp</span>`;
+      const chosen = Array.isArray(r.answers) ? r.answers[index] : undefined;
+      if (typeof chosen !== "string") return `<span class="no-answer">Không có dữ liệu</span>`;
+      const ok = chosen === correct[index];
+      const safeText = chosen.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+      return `<span class="answer-mark ${ok ? "answer-right" : "answer-wrong"}">${ok ? "✅" : "❌"} ${safeText}</span>`;
+    };
+    $("ranking").innerHTML = `
+      <p class="ranking-explain">⏱ Thời gian được tính từ khi giáo viên bắt đầu vòng chơi đến lúc nhóm nộp bài. Nhóm có nhiều câu đúng hơn xếp trên; nếu bằng điểm, nhóm nộp nhanh hơn xếp trên.</p>
+      <div class="ranking-scroll"><table class="ranking-table">
+        <thead><tr><th scope="col">Nội dung</th>${Array.from({length:5},(_,i)=>`<th scope="col">${["🐠","🐟","🐡","🐬","🐸"][i]}<br>Nhóm ${i+1}</th>`).join("")}</tr></thead>
+        <tbody>
+          ${questionNames.map((q,i)=>`<tr><th scope="row">${q}</th>${Array.from({length:5},(_,n)=>`<td>${answerCell(n+1,i)}</td>`).join("")}</tr>`).join("")}
+          <tr class="summary-row"><th scope="row">Điểm số</th>${Array.from({length:5},(_,i)=>`<td>${results[i+1] ? results[i+1].score+"/3" : "—"}</td>`).join("")}</tr>
+          <tr class="summary-row"><th scope="row">⏱ Thời gian</th>${Array.from({length:5},(_,i)=>`<td>${results[i+1] ? fmt(results[i+1].elapsedMs) : "—"}</td>`).join("")}</tr>
+          <tr class="summary-row"><th scope="row">🏆 Xếp hạng</th>${Array.from({length:5},(_,i)=>`<td>${rankByTeam.has(i+1) ? (["🥇 Hạng 1","🥈 Hạng 2","🥉 Hạng 3","Hạng 4","Hạng 5"][rankByTeam.get(i+1)-1]) : "—"}</td>`).join("")}</tr>
+        </tbody>
+      </table></div>
+      <p class="ranking-key">Đáp án đúng: ① thân thiết · ② nhớ · ③ vui đùa</p>
+    `;
+
   }
 
   updateClock();

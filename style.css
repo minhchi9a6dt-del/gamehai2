@@ -12,3 +12,18 @@
 #student .word.used{opacity:.48}
 #student #submit{display:block;max-width:550px;margin:20px auto 0;min-height:64px;background:linear-gradient(100deg,#13bd96,#059c7a);color:white;box-shadow:0 5px 0 #05846b;font-size:clamp(18px,2vw,24px)}
 @media(max-width:600px){#student .panel{padding:14px}#student .reading-passage>div{padding:13px;font-size:19px;line-height:2}#student .words{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#student .word{min-height:72px}#student .blank{min-width:110px;min-height:42px}}
+
+/* Bảng đối chiếu kết quả 5 nhóm sau khi công bố */
+.ranking-explain{font-size:1rem;line-height:1.6;color:#315f70;background:#eafaff;border-radius:12px;padding:12px 15px;margin:8px 0 16px}
+.ranking-scroll{overflow-x:auto;max-width:100%;border:2px solid #b7e8ef;border-radius:16px}
+.ranking-table{border-collapse:collapse;width:100%;min-width:750px;table-layout:fixed;text-align:center;background:#fff}
+.ranking-table th,.ranking-table td{border:1px solid #cce8ed;padding:15px 8px;vertical-align:middle;overflow-wrap:anywhere}
+.ranking-table thead th{background:#dcf8f5;color:#075d71;font-size:1.08rem}
+.ranking-table th:first-child{width:125px}
+.ranking-table tbody th{background:#f1fbff;color:#13647b;font-weight:850}
+.ranking-table tbody tr:nth-child(even) td{background:#f8fdff}
+.answer-mark{display:inline-block;font-size:1.02rem;font-weight:850;line-height:1.5}
+.answer-right{color:#087e53}.answer-wrong{color:#c52d38}.no-answer{color:#7c9199;font-size:.85rem}
+.ranking-table .summary-row td{font-weight:900;color:#0a617e;font-size:1.06rem}
+.ranking-key{margin:16px 0 0;font-weight:750;color:#126d72}
+@media(max-width:680px){.ranking-table th,.ranking-table td{padding:12px 7px}.ranking-explain{font-size:.9rem}}
