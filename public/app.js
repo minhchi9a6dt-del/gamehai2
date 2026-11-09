@@ -49,6 +49,6 @@ $('submit').onclick=async()=>{if(selected.some(x=>!x))return notice('Hãy điề
 function updateClock(){if(!room)return;const elapsed=room.startedAt?(room.endedAt||Date.now())-room.startedAt:0;if(role==='teacher')$('teacher-timer').textContent='⏱ '+fmt(elapsed);if(role==='student')$('student-timer').textContent='⏱ '+fmt(elapsed)}
 async function refresh(){if(!role||!code||pollBusy)return;pollBusy=true;try{const data=await api('state',{},'GET');render(data.room);if($('notice').textContent.startsWith('Mất kết nối'))notice('')}catch(e){notice('Mất kết nối tạm thời: '+e.message)}finally{pollBusy=false}}
 function init(){const p=new URLSearchParams(location.search),r=p.get('role'),c=p.get('room');if((r==='teacher'||r==='student')&&/^\d{6}$/.test(c||'')){setRoute(r,c);if(r==='teacher'){teacherToken=localStorage.getItem('fish_teacher_'+c)||'';if(!teacherToken){show('teacher',false);show('home');notice('Không có quyền giáo viên trên thiết bị này. Hãy tạo phòng mới từ màn hình chính.');role='';return}}
- if(r==='student'){try{const saved=JSON.parse(localStorage.getItem('fish_student_'+c)||'null');if(saved){team=saved.team;studentToken=saved.studentToken}}catch{}}refresh()}}
+ if(r==='student'){try{const saved=JSON.parse(localStorage.getItem('fish_student_'+c)||'null');if(saved){team=saved.team;studentToken=saved.studentToken}}catch{}}refresh()}
 setInterval(refresh,1500);setInterval(updateClock,250);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});}
 init();
