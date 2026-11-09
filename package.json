@@ -1,0 +1,6 @@
+{
+  "name":"doi-ban-ca-nho-realtime","version":"1.0.0","private":true,
+  "scripts":{"start":"netlify dev"},
+  "dependencies":{"@netlify/blobs":"^9.1.2"},
+  "devDependencies":{"netlify-cli":"^23.0.0"}
+}
