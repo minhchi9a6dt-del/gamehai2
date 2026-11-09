@@ -25,20 +25,22 @@ function render(r){if(!r)return;room=r;const oldRound=lastRound;lastRound=r.roun
  if(role==='student'){renderStudent(r,oldRound)}
 }
 function renderTeacher(r){$('teacher-code').textContent=r.code;qr();$('teacher-state').textContent=({waiting:'Đang chờ',playing:'Đang thi',finished:'Đã công bố'})[r.status];
- $('start').disabled=r.status!=='waiting'||!r.joinedTeams.length;$('finish').disabled=r.status!=='playing';
+
+$('start').disabled =
+  r.status !== 'waiting' ||
+  r.joinedTeams.length !== 5;
  $('teacher-teams').innerHTML=Array.from({length:5},(_,i)=>{const n=i+1,joined=r.joinedTeams.includes(n),done=r.submittedTeams.includes(n),result=r.results.find(x=>x.team===n);return `<div class="team ${done?'done':joined?'joined':''}"><div class="icon">${['🐠','🐟','🐡','🐬','🐸'][i]}</div><strong>Nhóm ${n}</strong><small>${done?'✅ Đã nộp':joined?'🟢 Đã kết nối':'⚪ Chưa vào'}</small>${result?`<p><b>${result.score}/3 câu</b><br>${fmt(result.elapsedMs)}</p>`:''}${joined&&r.status==='waiting'?`<button class="secondary" data-remove="${n}">Xóa iPad</button>`:''}</div>`}).join('');
  document.querySelectorAll('[data-remove]').forEach(el=>el.onclick=()=>{if(confirm('Cho nhóm này chọn lại iPad?'))teacherAction('remove',{team:Number(el.dataset.remove)})});
  show('ranking-panel',r.status==='finished');if(r.status==='finished')$('ranking').innerHTML=r.ranking.length?r.ranking.map((x,i)=>`<div class="rank"><strong>${['🥇','🥈','🥉','⭐','⭐'][i]} Nhóm ${x.team}</strong><span>${x.score}/3 câu · ${fmt(x.elapsedMs)}</span></div>`).join(''):'Chưa có nhóm nộp bài.';
  updateClock();}
 function renderStudent(r,oldRound){$('student-code').textContent=r.code;$('my-team').textContent=team?'Nhóm '+team:'Chưa chọn nhóm';$('student-state').textContent=({waiting:'Đang chờ',playing:'Đang thi',finished:'Kết thúc'})[r.status];
  if(team && oldRound && oldRound!==r.round){selected=[null,null,null];activeBlank=0}
-if (!r.joinedTeams.includes(team)) {
-  show('team-picker', false);
-  show('waiting', true);
-  show('playing', false);
-  show('submitted', false);
-  show('student-finished', false);
-  notice('Đang đồng bộ lại nhóm với giáo viên...');
+if (team && !r.joinedTeams.includes(team)) {
+  team = 0;
+  studentToken = '';
+  localStorage.removeItem('fish_student_' + code);
+  notice('Nhóm chưa được kết nối. Hãy chọn nhóm để tham gia.');
+  renderStudent(r, oldRound);
   return;
 }
  if(!r.joinedTeams.includes(team)){team=0;studentToken='';localStorage.removeItem('fish_student_'+code);notice('Giáo viên đã đặt lại nhóm. Hãy chọn nhóm để tham gia.');renderStudent(r,oldRound);return}
